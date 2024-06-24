@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luanda loading</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #0d1117;
+            color: #c9d1d9;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            position: relative;
+            cursor: none;
+        }
+        .background-video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -2;
+        }
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(13, 17, 23, 0.7); 
+            z-index: -1;
+        }
+        .custom-cursor {
+            position: absolute;
+            width: 32px;
+            height: 32px;
+            background-image: url('https://cdn.discordapp.com/attachments/1236424635097022464/1254941935341408266/5ltDpkC2Fh_mis.png?ex=667b5341&is=667a01c1&hm=50a1c4caafcbfa08b0876efc6580b0ca995d729625065f99c6b3f936b6ab6474&'); 
+            background-size: contain;
+            pointer-events: none;
+            z-index: 10000;
+        }
+        .loading-container {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            text-align: left;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: transparent;
+            z-index: 10;
+        }
+        .logo {
+            max-width: 100px;
+            display: block;
+        }
+        .loading-text {
+            font-size: 16px;
+            margin-top: 5px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #6c63ff;
+        }
+        .progress-bar-container {
+            width: 100vw;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            z-index: 10;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 15px;
+            background-color: rgba(86, 35, 134, 0.2);
+            overflow: hidden;
+        }
+        .progress-bar .progress {
+            height: 100%;
+            width: 0;
+            background-color: #6c63ff;
+            animation: progress-animation 5s linear infinite;
+        }
+        @keyframes progress-animation {
+            0% { width: 0; }
+            100% { width: 100%; }
+        }
+        .player-container {
+            display: flex;
+            align-items: center;
+            background-color: #161b22;
+            padding: 10px;
+            border-radius: 10px;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 350px;
+            z-index: 10;
+        }
+        .player-image {
+            width: 50px;
+            height: 50px;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+        .player-info {
+            flex-grow: 1;
+        }
+        .player-title {
+            font-size: 14px;
+            font-weight: bold;
+            margin: 0;
+        }
+        .player-artist {
+            font-size: 12px;
+            color: #7d8590;
+            margin: 0;
+        }
+        .player-controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+        .player-controls i {
+            font-size: 18px;
+            color: #c9d1d9;
+            cursor: pointer;
+            margin: 0 5px;
+        }
+        .player-controls i.green {
+            color: #6c63ff;
+        }
+        .controls-wrapper {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .controls-bar {
+            width: 100%;
+            height: 2px;
+            background-color: #c9d1d9;
+            margin: 10px 0;
+        }
+        .dna-container {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+            pointer-events: none;
+        }
+        .strand {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 2px;
+            height: 200%;
+            background: #6c63ff;
+            animation: rotate 10s linear infinite;
+        }
+        .strand:before, .strand:after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 10px;
+            height: 100%;
+            margin-left: -5px;
+            background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 50%, #6c63ff 50%, #6c63ff 100%);
+            animation: slide 0.5s linear infinite;
+        }
+        .strand:before {
+            transform: rotate(30deg);
+        }
+        .strand:after {
+            transform: rotate(-30deg);
+        }
+        @keyframes rotate {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+        @keyframes slide {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 200%; }
+        }
+        .star-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+            pointer-events: none;
+        }
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            opacity: 0;
+            animation: twinkle 2s infinite;
+        }
+        @keyframes twinkle {
+            0% { opacity: 0; }
+            50% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+        .messages-container {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 490px;
+            height: 14vh;
+            background-color: #161b22;
+            border-radius: 10px;
+            padding: 10px;
+            overflow-y: auto;
+            z-index: 10;
+        }
+        .messages-container::-webkit-scrollbar {
+            width: 12px;
+        }
+        .messages-container::-webkit-scrollbar-thumb {
+            background-color: #6c63ff;
+            border-radius: 6px;
+            border: 3px solid #161b22;
+        }
+        .messages-container::-webkit-scrollbar-thumb:hover {
+            background-color: #5349db;
+        }
+        .messages-container::-webkit-scrollbar-track {
+            background-color: #0d1117;
+            border-radius: 6px;
+        }
+        .message {
+            background-color: #0d1117;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            color: #c9d1d9;
+        }
+        .message-header {
+            color: #91bd2a;
+            font-weight: bold;
+        }
+        .timestamp {
+            color: #7d8590;
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+        .message-body {
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="loading-container">
+        <img src="https://png.pngtree.com/png-vector/20220704/ourmid/pngtree-wave-blue-logo-template-png-image_5565593.png" alt="Logo" class="logo">
+        <h1 class="loading-text">You are currently accessing the server, the server is loading...</h1>
+    </div>
+    <div class="player-container">
+        <img src="https://upload.wikimedia.org/wikipedia/bs/5/58/Imperia_logo.jpg" alt="Album Art" class="player-image" id="player-image">
+        <div class="player-info">
+            <h2 class="player-title" id="player-title">Imperia</h2>
+            <p class="player-artist" id="player-artist">Maya Berović - Dilajla</p>
+            <div class="controls-wrapper">
+                <div class="controls-bar"></div>
+                <div class="player-controls">
+                    <i class="fa-solid fa-backward" id="backward"></i>
+                    <i class="fa-solid fa-play green" id="play-pause"></i>
+                    <i class="fa-solid fa-pause" id="pause" style="display:none;"></i>
+                    <i class="fa-solid fa-forward" id="forward"></i>
+                    <i class="fa-solid fa-repeat green"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="progress-bar-container">
+        <div class="progress-bar">
+            <div class="progress"></div>
+        </div>
+    </div>
+    <div class="messages-container">
+        <div class="message">
+            <div class="message-header">sterexdevelopment</div>
+            <div class="timestamp"></div>
+            <div class="message-body">Please respect the rules</div>
+        </div>
+        <div class="message">
+            <div class="message-header">sterexdevelopment</div>
+            <div class="timestamp"></div>
+            <div class="message-body">You are always thinking about how to perform the rp situation well🙂</div>
+        </div>
+    </div>
+    <audio id="audio-player" autoplay loop>
+        <source src="https://cdn.discordapp.com/attachments/1236424635097022464/1254941496826663023/yIAPvaiX9M_crnoka.mp3?ex=667b52d8&is=667a0158&hm=7b7c49937324d1063c8475f6746cc930bba483e6c46be859c3cc3221602eebdf&" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <div class="dna-container">
+        <div class="strand"></div>
+    </div>
+
+    <div class="star-container" id="star-container"></div>
+
+    <img id="custom-cursor" src="https://danijelmesec.eu/uploads/2/5ltDpkC2Fh_mis.png" style="position: absolute; pointer-events: none; z-index: 1000; width: 32px; height: 32px;">
+
+    <script>
+        const audioPlayer = document.getElementById('audio-player');
+        const playPauseBtn = document.getElementById('play-pause');
+        const pauseBtn = document.getElementById('pause');
+        const backwardBtn = document.getElementById('backward');
+        const forwardBtn = document.getElementById('forward');
+        const playerTitle = document.getElementById('player-title');
+        const playerArtist = document.getElementById('player-artist');
+        const playerImage = document.getElementById('player-image');
+
+        const songs = [
+            {
+                src: "https://cdn.discordapp.com/attachments/1236424635097022464/1254941496826663023/yIAPvaiX9M_crnoka.mp3?ex=667b52d8&is=667a0158&hm=7b7c49937324d1063c8475f6746cc930bba483e6c46be859c3cc3221602eebdf&",
+                title: "Seka Aleksić",
+                artist: "SEKA ALEKSIC - CRNOOKA",
+                image: "https://cdns-images.dzcdn.net/images/artist/a36e53278db0f7827868e44f4bc7f53e/500x500.jpg"
+            },
+            {
+                src: "https://cdn.discordapp.com/attachments/1236424635097022464/1254941746551324802/KDdhowxbC7_pjesma2.mp3?ex=667b5314&is=667a0194&hm=c699f16957f29930d830813b96eb628ec2a24ed5487dac10755c2c0e2e49f63f&",
+                title: "Imperia",
+                artist: "Maya Berović - Dilajla",
+                image: "https://upload.wikimedia.org/wikipedia/bs/5/58/Imperia_logo.jpg"
+            },
+            {
+                src: "https://cdn.discordapp.com/attachments/1236424635097022464/1254941838922612786/F3D6ZPtseM_crveni.mp3?ex=667b532a&is=667a01aa&hm=4f3da644f852da2fa71a600374bc0ebce9b776b021e6882fc5c65d9297914744&",
+                title: "Seka Aleksić",
+                artist: "SEKA ALEKSIC - CRVENI RUZ",
+                image: "https://cdns-images.dzcdn.net/images/artist/a36e53278db0f7827868e44f4bc7f53e/500x500.jpg"
+            }
+        ];
+
+        let currentSongIndex = 0;
+
+        function loadSong(index) {
+            audioPlayer.src = songs[index].src;
+            playerTitle.textContent = songs[index].title;
+            playerArtist.textContent = songs[index].artist;
+            playerImage.src = songs[index].image;
+            audioPlayer.play();
+            playPauseBtn.style.display = 'none';
+            pauseBtn.style.display = 'inline';
+        }
+
+        playPauseBtn.addEventListener('click', () => {
+            audioPlayer.play();
+            playPauseBtn.style.display = 'none';
+            pauseBtn.style.display = 'inline';
+        });
+
+        pauseBtn.addEventListener('click', () => {
+            audioPlayer.pause();
+            pauseBtn.style.display = 'none';
+            playPauseBtn.style.display = 'inline';
+        });
+
+        forwardBtn.addEventListener('click', () => {
+            currentSongIndex = (currentSongIndex + 1) % songs.length;
+            loadSong(currentSongIndex);
+        });
+
+        backwardBtn.addEventListener('click', () => {
+            currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
+            loadSong(currentSongIndex);
+        });
+
+        const starContainer = document.getElementById('star-container');
+        const starCount = 100;
+
+        for (let i = 0; i < starCount; i++) {
+            const star = document.createElement('div');
+            star.classList.add('star');
+            star.style.top = Math.random() * 100 + '%';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.animationDuration = (Math.random() * 2 + 1) + 's';
+            starContainer.appendChild(star);
+        }
+
+        document.addEventListener('mousemove', function(event) {
+            const customCursor = document.getElementById('custom-cursor');
+            customCursor.style.left = event.pageX + 'px';
+            customCursor.style.top = event.pageY + 'px';
+        });
+
+        loadSong(currentSongIndex);
+    </script>
+</body>
+</html>
